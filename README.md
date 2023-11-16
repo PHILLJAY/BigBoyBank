@@ -1,5 +1,5 @@
 # BigBoyBank
-Terminal based bank client coded in java!
+Terminal based bank client coded in java and tested using JUnit tests. Readme will update as project goes along.
 
 ## UML Diagram
 
