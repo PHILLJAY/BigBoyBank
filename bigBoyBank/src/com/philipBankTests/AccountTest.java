@@ -76,16 +76,49 @@ class AccountTest {
     void calculateInterest() {
         //Calculating annual interest for 1 year
         Account obj = new Account(100, 0.1);
-        assertEquals(110, obj.calculateInterest("annual", 1), "Interest calculated successfully");
+        assertEquals(110,
+                obj.calculateInterest("annual", 1),
+                "Annual Interest calculated successfully");
 
         //Calculating annual interest for 5 years
-        assertEquals(161.05, obj.calculateInterest("annual", 5), "Interest calculated successfully");
+        assertEquals(161.05,
+                obj.calculateInterest("annual", 5),
+                "Annual Interest calculated successfully for 5 years");
 
         //Calculating monthly interest
-        //TODO set up this test
-        assertEquals(,obj.calculateInterest("monthly",1));
-        //Calculating weekly interest
+        obj.setInterestRate(0.12);
+        assertEquals(101,
+                obj.calculateInterest("monthly",1),
+                "Monthly interest calculated successfully");
 
+        //Calculating monthly interest for 5 months
+        assertEquals(105.10,
+                obj.calculateInterest("monthly",5),
+                "Monthly interest calculated successfully for 5 months");
+
+        //Calculating weekly interest
+        obj.setInterestRate(0.52);
+        assertEquals(101,
+                obj.calculateInterest("weekly",1),
+                "weekly interest calculated successfully");
+
+        //Calculating weekly interest for 5 weeks
+        assertEquals(105.10,
+                obj.calculateInterest("weekly",5),
+                "weekly interest calculated successfully for 5 weeks");
+
+        //Calculating daily interest
+        obj.setInterestRate(0.365);
+        assertEquals(100.10,
+                obj.calculateInterest("daily",1),
+                "Daily interest calculated successfully");
+
+        //Calculating daily interest rate for 5 days
+        assertEquals(100.50,
+                obj.calculateInterest("daily",5),
+                "Daily interest calculated successfully for 5 days");
+        //Checking for illegal arguments
+        assertThrows(IllegalArgumentException.class, () ->obj.calculateInterest("FART", 4), "Throws illegal argument exception when the wrong stirng is passed");
 
     }
 }

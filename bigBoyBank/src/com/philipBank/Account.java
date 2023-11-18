@@ -66,13 +66,19 @@ public class Account {
         double finalOutput = 0.0;
 
         switch (period){
-            case "day" -> {
+            case "daily" -> {
                 finalOutput = this.money*Math.pow((1+(this.interestRate/365)),numOfPeriods);
             }
-            case "week" -> System.out.println("Calculate weekly interest");
-            case "month" -> System.out.println("calculate monthly interest");
-            case "annual" -> System.out.println("calculate annual interest");
-            default -> throw new IllegalStateException("Unexpected value: " + period);
+            case "weekly" -> {
+                finalOutput = this.money*Math.pow((1+(this.interestRate/52)),numOfPeriods);
+            }
+            case "monthly" -> {
+                finalOutput = this.money*Math.pow((1+(this.interestRate/12)),numOfPeriods);
+            }
+            case "annual" -> {
+                finalOutput =  this.money*Math.pow(1+this.interestRate,numOfPeriods);
+            }
+            default -> throw new IllegalArgumentException("Unexpected value: " + period);
         }
         BigDecimal bd = new BigDecimal(Double.toString(finalOutput));
         bd = bd.setScale(2, RoundingMode.HALF_EVEN);
