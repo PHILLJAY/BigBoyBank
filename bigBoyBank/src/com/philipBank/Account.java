@@ -1,5 +1,7 @@
 package com.philipBank;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Random;
 
@@ -7,15 +9,15 @@ public class Account {
     private final int ID;
     private double money;
     private final LocalDateTime dateOfCreation;
-    private double interest;
+    private double interestRate;
 
     public int getID() {
         return ID;
     }
 
-    public Account(double money, double interest) {
+    public Account(double money, double interestRate) {
         this.money = money;
-        this.interest = interest;
+        this.interestRate = interestRate;
         Random rand = new Random();
         ID = rand.nextInt(0,100);
         this.dateOfCreation = LocalDateTime.now();
@@ -33,14 +35,14 @@ public class Account {
         this.money = money;
     }
 
-    public double getInterest() {
-        return interest;
+    public double getInterestRate() {
+        return interestRate;
     }
 
-    public void setInterest(double interest) {
-        if (interest>=1 || interest<0)
+    public void setInterestRate(double interestRate) {
+        if (interestRate >=1 || interestRate <0)
             throw new IllegalArgumentException("Interest can not be greater than 1 or less than 0");
-        this.interest = interest;
+        this.interestRate = interestRate;
     }
 
     public void addFunds(double addAmount){
@@ -54,18 +56,28 @@ public class Account {
         if(removeAmount <=0){
             throw new IllegalArgumentException("value must be positive");
         }
-        if ((this.money-removeAmount) <= 0){
-            throw new RuntimeException("Error: the following action will cause your bank account to be negative");
-        }
         this.money = this.money-removeAmount;
     }
-    public void calculateInterest(String period){
+    public double calculateInterest(@org.jetbrains.annotations.NotNull String period, int numOfPeriods){
+        //returns interest for a given account based on period.
+        //For reference, interest is given by A = P(1+r/n)^(nt)
+
+
+        double finalOutput = 0.0;
+
         switch (period){
-            case "day" -> System.out.println("Calculate daily interest");
+            case "day" -> {
+                finalOutput = this.money*Math.pow((1+(this.interestRate/365)),numOfPeriods);
+            }
             case "week" -> System.out.println("Calculate weekly interest");
             case "month" -> System.out.println("calculate monthly interest");
+            case "annual" -> System.out.println("calculate annual interest");
             default -> throw new IllegalStateException("Unexpected value: " + period);
         }
+        BigDecimal bd = new BigDecimal(Double.toString(finalOutput));
+        bd = bd.setScale(2, RoundingMode.HALF_EVEN);
+
+        return bd.doubleValue();
     }
 
 
