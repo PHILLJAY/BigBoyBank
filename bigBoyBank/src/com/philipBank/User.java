@@ -1,9 +1,23 @@
 package com.philipBank;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class User {
+    String firstName;
+    String lastName;
+    int numOfAccounts = 0;
+    private List<Account> accounts;
+    LocalDateTime dateOfCreation;
 
+
+    public User(String firstName, String lastName) {
+        setFirstName(firstName);
+        setLastName(lastName);
+        this.dateOfCreation = LocalDateTime.now();
+        this.accounts = new ArrayList<>();
+    }
 
     public String getFirstName() {
         return firstName;
@@ -33,22 +47,17 @@ public class User {
         return dateOfCreation;
     }
 
-
-    String firstName;
-    String lastName;
-    int numOfAccounts = 0;
-
-    LocalDateTime dateOfCreation;
-
-    public User(String firstName, String lastName) {
-        setFirstName(firstName);
-        setLastName(lastName);
-        LocalDateTime tempDate = LocalDateTime.now();
-        this.dateOfCreation = LocalDateTime.now();
+    public void addAccount(Account account) {
+        this.accounts.add(account);
+        this.numOfAccounts++;
     }
 
     @Override
     public String toString() {
         return super.toString();
+    }
+
+    public List<Account> getAccounts() {
+        return accounts;
     }
 }

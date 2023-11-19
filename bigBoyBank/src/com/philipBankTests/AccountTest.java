@@ -1,7 +1,9 @@
 package com.philipBankTests;
 
+import com.philipBank.ATM;
 import com.philipBank.Account;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -121,4 +123,86 @@ class AccountTest {
         assertThrows(IllegalArgumentException.class, () ->obj.calculateInterest("FART", 4), "Throws illegal argument exception when the wrong stirng is passed");
 
     }
+
+    @Test
+    void testEquals() {
+        Account obj1 = new Account(100,0.1);
+        Account obj2 = new Account(100,0.1);
+        //Asserting overrides work
+        assertEquals(obj1, obj2, "Values are the same");
+
+        //Asserting equals works
+        obj2.setMoney(20);
+        assertNotEquals(obj1, obj2, "Values are not the same");
+    }
+
+    @Test
+    void transferMoney() {
+        Account obj1 = new Account(100);
+        Account obj2 = new Account(100);
+        //Testing initial transfer works
+        // Testing initial transfer works
+        obj1.transferMoney(obj2,50);
+        assertEquals(50,obj1.getMoney(), "After transferring $50, obj1 should have $50 left");
+        assertEquals(150,obj2.getMoney(), "After receiving $50, obj2 should have $150");
+
+        obj1.setMoney(100);
+        obj2.setMoney(100);
+
+        // Testing to ensure negative values are not allowed
+        assertThrows(IllegalArgumentException.class,() -> obj1.transferMoney(obj2,-100), "Transferring a negative amount should throw an IllegalArgumentException");
+        assertEquals(100,obj1.getMoney(), "obj1 should still have $100 after attempting to transfer a negative amount");
+        assertEquals(100,obj2.getMoney(), "obj2 should still have $100 after obj1 attempted to transfer a negative amount");
+
+        obj1.setMoney(100);
+        obj2.setMoney(100);
+
+        // Testing to ensure that you cannot send an amount that would put you into negatives
+        assertThrows(IllegalArgumentException.class,() -> obj1.transferMoney(obj2,250), "Transferring more money than available should throw an IllegalArgumentException");
+        assertEquals(100,obj1.getMoney(), "obj1 should still have $100 after attempting to transfer an excessive amount");
+        assertEquals(100,obj2.getMoney(), "obj2 should still have $100 after obj1 attempted to transfer an excessive amount");
+
+        // Testing to ensure you cannot send an amount to yourself
+        assertThrows(IllegalArgumentException.class,() -> obj1.transferMoney(obj1,1), "Transferring money to oneself should throw an IllegalArgumentException");
+        assertEquals(100,obj1.getMoney(), "obj1 should still have $100 after attempting to transfer money to itself");
+        assertEquals(100,obj2.getMoney(), "obj2 should still have $100 as no successful transactions occurred");
+    }
+
+    @Test
+    void testWithDrawMoney() {
+        Account account = new Account(100);
+        ATM atm = new ATM(true);
+
+        // Test successful withdrawal
+        account.withdrawMoney(atm, 50);
+        assertEquals(50, account.getMoney(), "After withdrawing $50, the account should have $50 left");
+
+        // Test withdrawal from a non-working ATM
+        ATM brokenAtm = new ATM(false);
+        assertThrows(RuntimeException.class, () -> account.withdrawMoney(brokenAtm, 50), "Withdrawing from a non-working ATM should throw a RuntimeException");
+
+        // Test withdrawal of an amount greater than the balance
+        assertThrows(IllegalArgumentException.class, () -> account.withdrawMoney(atm, 100), "Withdrawing more money than available should throw an IllegalArgumentException");
+
+        // Test withdrawal of a negative amount
+        assertThrows(IllegalArgumentException.class, () -> account.withdrawMoney(atm, -50), "Withdrawing a negative amount should throw an IllegalArgumentException");
+    }
+
+    @Test
+    void testDepositMoney() {
+        Account account = new Account(100);
+        ATM atm = new ATM(true);
+
+        // Test successful deposit
+        account.depositMoney(atm, 50);
+        assertEquals(150, account.getMoney(), "After depositing $50, the account should have $150");
+
+        // Test deposit to a non-working ATM
+        ATM brokenAtm = new ATM(false);
+        assertThrows(RuntimeException.class, () -> account.depositMoney(brokenAtm, 50), "Depositing to a non-working ATM should throw a RuntimeException");
+
+        // Test deposit of a negative amount
+        assertThrows(IllegalArgumentException.class, () -> account.depositMoney(atm, -50), "Depositing a negative amount should throw an IllegalArgumentException");
+    }
 }
+
